@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>線上石材檯面估價系統</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://www.toptal.com/designers/subtlepatterns/uploads/wood_pattern.png');
+            background-size: cover;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        label, select, input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #shapeImage {
+            max-width: 100%;
+            margin-top: 10px;
+            display: none;
+            cursor: pointer;
+        }
+
+
+      /* 新增價格容器樣式 */
+    .price-container {
+        text-align: center; /* 水平置中 */
+    }
+    .price-container h3 {
+        font-size: 1.5em; /* 統一字體大小 */
+        font-family: Arial, sans-serif; /* 與body一致 */
+        margin: 10px 0; /* 上下間距一致 */
+        display: flex; /* 使用flexbox垂直對中 */
+        justify-content: center; /* 水平置中 */
+        align-items: center; /* 垂直對中 */
+        height: 40px; /* 固定高度，確保對齊一致 */
+    }
+    .price-container h3 span {
+        font-weight: bold; /* 可選：讓數字更顯眼 */
+    }
+
+         /* 新增勾選框放大樣式 */
+        input[type="checkbox"] {
+        transform: scale(1); /* 將勾選框放大 2 倍 */
+        margin-right: 10px; /* 確保勾選框與後面的文字或元素有適當間距增加右邊距，避免與文字重疊 */
+        vertical-align: middle; /* 保持勾選框與文字垂直對齊，避免位移 垂直對齊 */
+    }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">線上石材檯面估價系統</h2>
+
+        <label>石材種類：康沛石(價格版本2025年2月)系統問題請聯繫官方人員</label>
+
+        <label for="colorSelect">選擇顏色：</label>
+        <select id="colorSelect">
+            <option value="CP111">CP111（108 元）</option>
+            <option value="CP112">CP112（108 元）</option>
+            <option value="CP211">CP211（108 元）</option>
+            <option value="CP212">CP212（118 元）</option>
+            <option value="CP218">CP218（118 元）</option>
+            <option value="CP311">CP311（118 元）</option>
+        </select>
+
+        <label for="shapeSelect">選擇檯面形狀(初次使用請稍等~會顯示出示意圖依照上面說明輸入長寬尺寸)：</label>
+        <select id="shapeSelect" onchange="updateSizeInputs()">
+            <option value="">這裡請選擇形狀</option>
+            <option value="linear">一字型或中島型</option>
+            <option value="L">L 型</option>
+            <option value="U">ㄇ字型</option>
+          </select>
+        <img id="shapeImage1" src="" alt="檯面形狀示意圖1" style="max-width: 100%; margin-top: 10px; display: none; cursor: pointer;">
+        <img id="shapeImage2" src="" alt="檯面形狀示意圖2" style="max-width: 100%; margin-top: 10px; display: none; cursor: pointer;">
+
+        <div id="sizeInputs"></div>
+
+
+
+       
+        <label for="sideLegOption">側落腳(打勾會顯示出示意圖)請保持打勾狀態才能正常計價：</label>
+        <input type="checkbox" id="sideLegOption" onchange="toggleSideLegInputs()">
+
+        <img id="sideLegImage" src="https://i.postimg.cc/rFBVPDmq/image.jpg" alt="側落腳示意圖" style="display: none; max-width: 100%; margin-top: 10px; clear: both;">
+        
+        <!-- 新增的額外清楚示意圖片 -->
+        <img id="clearSideLegImage" src="https://i.postimg.cc/Dwpz1vVk/2.jpg" alt="更清楚的側落腳示意圖" style="display: none; max-width: 100%; margin-top: 10px; clear: both;">
+        
+        <div id="sideLegInputs" style="display: none;">
+    <!-- 左腳 -->
+    <label for="leftSideLegHeight">左腳高度 (cm) (填入需求的高度)若只有單側只要輸入一邊即可：</label>
+    <input type="number" id="leftSideLegHeight" min="0" value="">
+    <label for="leftSideLegWidth">左腳寬度 (cm) (填入需求的寬度，需將寬度、厚度、內包加總)：</label>
+    <input type="number" id="leftSideLegWidth" min="0" value="">
+    
+    <!-- 右腳 -->
+    <label for="rightSideLegHeight">右腳高度 (cm) (填入需求的高度)有兩隻腳才要輸入否則留空即可：</label>
+    <input type="number" id="rightSideLegHeight" min="0" value="">
+    <label for="rightSideLegWidth">右腳寬度 (cm) (填入需求的寬度，需將寬度、厚度、內包加總)：</label>
+    <input type="number" id="rightSideLegWidth" min="0" value="">
+</div>
+
+         
+
+
+
+        <label for="backPanelOption">美背板(檯面若有美背板請打勾會顯示出示意圖)請保持打勾狀態才能正常計價：</label>
+        <input type="checkbox" id="backPanelOption" onchange="toggleBackPanelInputs()">
+      
+
+        <img id="backPanelImage" src="https://i.postimg.cc/zB1P8DTZ/image.jpg" alt="美背板示意圖" style="display: none; max-width: 100%; margin-top: 10px; clear: both;">
+        
+        <!-- 新增的額外清楚示意圖片 -->
+        <img id="clearBackPanelImage" src="https://i.postimg.cc/QMfnXCSL/1102903.png" alt="更清楚的美背板示意圖" style="display: none; max-width: 100%; margin-top: 10px; clear: both;">
+        
+
+        <div id="backPanelInputs" style="display: none;">
+        <label for="backPanelLength">美背板長度 (cm)：</label>
+        <input type="number" id="backPanelLength" min="1" value="">
+        <label for="backPanelWidth">美背板高度 (cm)：</label>
+        <input type="number" id="backPanelWidth" min="1" value="">
+        </div>
+
+
+
+
+
+
+        <!-- 側落腳45度接 -->
+        <label for="sideJointCount">側落腳45度接示意圖 看完可取消打勾 避免畫面太過於壅擠：</label>
+        <input type="checkbox" id="sideJointOption" onchange="toggleSideJointImage()"> <span> 側落腳45度接工資(5000/個)</span>
+        <input type="number" id="sideJointCount" min="0" placeholder="請輸入數量(若沒有請留空白)">
+        <img id="sideJointImage" src="https://i.postimg.cc/CKg5jxd1/45.jpg" alt="45度接示意圖" style="display: none; max-width: 100%; margin-top: 10px;">
+
+         <!-- 水槽下崁 -->
+         <label for="sinkCount">水槽下崁示意圖 看完可取消打勾 避免畫面太過於壅擠：</label>
+         <input type="checkbox" id="sinkOption" onchange="toggleSinkImage()"> <span> 水槽下崁工資(3500/個) </span>
+         <input type="number" id="sinkCount" min="0" placeholder="請輸入數量(若沒有請留空白)">
+         <img id="sinkImage" src="https://i.postimg.cc/HnfVsVs9/image.jpg" alt="水槽下崁示意圖" style="display: none; max-width: 100%; margin-top: 10px;">
+
+        <!-- 水槽平接 -->
+        <label for="sinkFlatCount">水槽平接示意圖 看完可取消打勾 避免畫面太過於壅擠：</label>
+        <input type="checkbox" id="sinkFlatOption" onchange="toggleSinkFlatImage()"> <span> 水槽平接工資(5000/個)(作法限使用人造石水槽) </span>
+        <input type="number" id="sinkFlatCount" min="0" placeholder="請輸入數量(若沒有請留空白)">
+        <img id="sinkFlatImage" src="https://i.postimg.cc/tgjKhyMR/image.jpg" alt="水槽平接示意圖" style="display: none; max-width: 100%; margin-top: 10px;">
+
+        <!-- 爐台上裝 -->
+        <label for="stoveTopCount">爐台上裝示意圖 看完可取消打勾 避免畫面太過於壅擠：</label>
+        <input type="checkbox" id="stoveTopOption" onchange="toggleStoveTopImage()"> <span> 爐台上裝工資(2000/個) </span>
+        <input type="number" id="stoveTopCount" min="0" placeholder="請輸入數量(若沒有請留空白)">
+        <img id="stoveTopImage" src="https://i.postimg.cc/MHNvKtmL/image.jpg" alt="爐台上裝示意圖" style="display: none; max-width: 100%; margin-top: 10px;">
+
+
+        <!-- 爐台平接 -->
+        <label for="stoveFlatCount">爐台平接示意圖 看完可取消打勾 避免畫面太過於壅擠：</label>
+        <input type="checkbox" id="stoveFlatOption" onchange="toggleStoveFlatImage()"> <span> 爐台平接工資(4000/個) </span>
+        <input type="number" id="stoveFlatCount" min="0" placeholder="請輸入數量(若沒有請留空白)">
+        <img id="stoveFlatImage" src="https://i.postimg.cc/y8Q0SqyJ/image.jpg" alt="爐台平接示意圖" style="display: none; max-width: 100%; margin-top: 10px;">
+
+        <!-- 插座孔 -->
+        <label for="socketCount">插座孔示意圖 看完可取消打勾 避免畫面太過於壅擠：</label>
+        <input type="checkbox" id="socketOption" onchange="toggleSocketImage()"> <span> 插座孔工資(1500/個) </span>
+        <input type="number" id="socketCount" min="0" placeholder="請輸入數量(若沒有請留空白)">
+        <img id="socketImage" src="https://i.postimg.cc/5y5bZV2n/image.jpg" alt="插座孔示意圖" style="display: none; max-width: 100%; margin-top: 10px;">
+
+
+        <h3 style="text-align: center;">[輸入完請按計算估價]</h3>
+
+        <button onclick="calculatePrice()">計算估價</button>
+
+    <div class="price-container">
+        <h3>總價（未稅）：<span id="totalPrice">0</span> 元</h3>
+        <h3>總價（含稅）：<span id="totalPriceWithTax">0</span> 元</h3>
+</div>
+
+
+        <!-- 顯示計算結果僅供參考的文字，這裡使用了 style 讓它居中顯示 -->
+        <h4 style="text-align: center; margin-top: 10px;">（計算結果僅供參考）</h4>
+
+        <button onclick="resetForm()">重置所有填寫內容</button>
+
+    </div>
+
+    <script>
+    const shapeImages = {
+    "linear": [
+        "https://i.postimg.cc/rw9D6PJw/image.jpg",       // 原本的圖片
+        "https://i.postimg.cc/fy5WQMGv/image.png"                 // 新增的圖片（請替換）
+    ],
+
+    "L": [
+        "https://i.postimg.cc/g0d38hMn/L.jpg",           // 原本的圖片
+        "https://i.postimg.cc/j2Rq1DF5/L.png"                 // 新增的圖片（請替換）
+    ],
+
+    "U": [
+        "https://i.postimg.cc/Y9SRLPRX/MM.jpg",       // 原本的圖片
+        "https://i.postimg.cc/50BNpBpT/image.png"                 // 新增的圖片（請替換）
+    ]
+};
+
+    function updateSizeInputs() {
+        let shape = document.getElementById("shapeSelect").value;
+        let sizeInputs = document.getElementById("sizeInputs");
+        let shapeImage1 = document.getElementById("shapeImage1");
+        let shapeImage2 = document.getElementById("shapeImage2");
+
+        // 如果有選擇形狀，顯示兩張圖片；否則隱藏
+    if (shape && shapeImages[shape]) {
+        shapeImage1.src = shapeImages[shape][0] || ""; // 第一張圖片
+        shapeImage2.src = shapeImages[shape][1] || ""; // 第二張圖片
+        shapeImage1.style.display = "block";
+        shapeImage2.style.display = "block";
+    } else {
+        shapeImage1.src = "";
+        shapeImage2.src = "";
+        shapeImage1.style.display = "none";
+        shapeImage2.style.display = "none";
+    }
+        
+        sizeInputs.innerHTML = "";
+        let fields = shape === "linear" ? ["length1", "width1"] :
+                     shape === "L" ? ["length1", "width1", "length2", "width2"] :
+                     shape === "U" ? ["length1", "width1", "length2", "width2", "length3", "width3"] : [];
+        
+        fields.forEach(key => {
+            let label = document.createElement("label");
+            label.textContent = key.includes("length") ? "長度 (cm) (填入總長度)以最長點為準，系統已內建轉角相扣公式，請勿重複預扣 " : "寬度 (cm) (填入總寬度需將背牆.寬度.厚度.內包加總)比如73或133內包若為套版不計 ";
+            let input = document.createElement("input");
+            input.type = "number";
+            input.min = "1";
+            input.id = key;
+            input.value = "";
+            sizeInputs.appendChild(label);
+            sizeInputs.appendChild(input);
+        });
+    }
+
+    function toggleSideLegInputs() {
+        let checked = document.getElementById("sideLegOption").checked;
+        let sideLegInputs = document.getElementById("sideLegInputs");
+        let sideLegImage = document.getElementById("sideLegImage");
+        let clearSideLegImage = document.getElementById("clearSideLegImage");
+        
+        sideLegInputs.style.display = checked ? "block" : "none";
+        sideLegImage.style.display = checked ? "block" : "none";
+        clearSideLegImage.style.display = checked ? "block" : "none";
+        
+        if (!checked) {
+        document.getElementById("leftSideLegHeight").value = "";
+        document.getElementById("leftSideLegWidth").value = "";
+        document.getElementById("rightSideLegHeight").value = "";
+        document.getElementById("rightSideLegWidth").value = "";
+    }
+}
+
+    function toggleBackPanelInputs() {
+        let checked = document.getElementById("backPanelOption").checked;
+        let backPanelInputs = document.getElementById("backPanelInputs");
+        let backPanelImage = document.getElementById("backPanelImage");
+        let clearBackPanelImage = document.getElementById("clearBackPanelImage");
+        
+        // 確保顯示或隱藏
+        backPanelInputs.style.display = checked ? "block" : "none";
+        backPanelImage.style.display = checked ? "block" : "none";
+        clearBackPanelImage.style.display = checked ? "block" : "none";
+        
+        // 如果取消勾選，清空輸入框
+        if (!checked) {
+            document.getElementById("backPanelLength").value = "";
+            document.getElementById("backPanelWidth").value = "";
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+// 水槽下崁
+function toggleSinkImage() {
+    let checked = document.getElementById("sinkOption").checked;
+    let sinkImage = document.getElementById("sinkImage");
+    sinkImage.style.display = checked ? "block" : "none";
+}
+
+// 側落腳45度接
+function toggleSideJointImage() {
+    let checked = document.getElementById("sideJointOption").checked;
+    let sideJointImage = document.getElementById("sideJointImage");
+    sideJointImage.style.display = checked ? "block" : "none";
+}
+
+// 水槽平接
+function toggleSinkFlatImage() {
+    let checked = document.getElementById("sinkFlatOption").checked;
+    let sinkFlatImage = document.getElementById("sinkFlatImage");
+    sinkFlatImage.style.display = checked ? "block" : "none";
+}
+
+// 爐台上裝
+function toggleStoveTopImage() {
+    let checked = document.getElementById("stoveTopOption").checked;
+    let stoveTopImage = document.getElementById("stoveTopImage");
+    stoveTopImage.style.display = checked ? "block" : "none";
+}
+
+// 爐台平接
+function toggleStoveFlatImage() {
+    let checked = document.getElementById("stoveFlatOption").checked;
+    let stoveFlatImage = document.getElementById("stoveFlatImage");
+    stoveFlatImage.style.display = checked ? "block" : "none";
+}
+
+// 插座孔
+function toggleSocketImage() {
+    let checked = document.getElementById("socketOption").checked;
+    let socketImage = document.getElementById("socketImage");
+    socketImage.style.display = checked ? "block" : "none";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function calculatePrice() {
+        let shape = document.getElementById("shapeSelect").value;
+        let color = document.getElementById("colorSelect").value;
+
+        let priceMap = {
+            "CP111": 108, "CP112": 108, "CP211": 108,
+            "CP212": 118, "CP218": 118, "CP311": 118
+        };
+        
+        let pricePerCm = priceMap[color] || 108;
+        let total = 0;
+
+        function calculateWidthFactor(width) {
+            return width < 69 ? 1 : width / 60;
+        }
+
+        if (shape === "linear") {
+            let length1 = parseFloat(document.getElementById("length1").value) || 0;
+            let width1 = calculateWidthFactor(parseFloat(document.getElementById("width1").value) || 0);
+            if (length1 > 0) {
+                total = length1 * width1 * pricePerCm;
+            }
+        } else if (shape === "L") {
+            let length1 = parseFloat(document.getElementById("length1").value) || 0;
+            let width1 = calculateWidthFactor(parseFloat(document.getElementById("width1").value) || 0);
+            let length2 = parseFloat(document.getElementById("length2").value) || 0;
+            let width2 = calculateWidthFactor(parseFloat(document.getElementById("width2").value) || 0);
+            if (length1 > 0 && length2 > 0) {
+                total = ((length1 * width1) + (length2 * width2) - 30) * pricePerCm;
+            }
+        } else if (shape === "U") {
+            let length1 = parseFloat(document.getElementById("length1").value) || 0;
+            let width1 = calculateWidthFactor(parseFloat(document.getElementById("width1").value) || 0);
+            let length2 = parseFloat(document.getElementById("length2").value) || 0;
+            let width2 = calculateWidthFactor(parseFloat(document.getElementById("width2").value) || 0);
+            let length3 = parseFloat(document.getElementById("length3").value) || 0;
+            let width3 = calculateWidthFactor(parseFloat(document.getElementById("width3").value) || 0);
+            if (length1 > 0 && length2 > 0 && length3 > 0) {
+                total = ((length1 * width1) + (length2 * width2) + (length3 * width3) - 60) * pricePerCm;
+            }
+        }
+
+        // 側落腳計算（新邏輯）
+
+        if (document.getElementById("sideLegOption").checked) {
+        let leftHeight = parseFloat(document.getElementById("leftSideLegHeight").value) || 0;
+        let leftWidth = parseFloat(document.getElementById("leftSideLegWidth").value) || 0;
+        let rightHeight = parseFloat(document.getElementById("rightSideLegHeight").value) || 0;
+        let rightWidth = parseFloat(document.getElementById("rightSideLegWidth").value) || 0;
+
+        let leftSideLegCost = (leftHeight * calculateWidthFactor(leftWidth)) * pricePerCm;
+        let rightSideLegCost = (rightHeight * calculateWidthFactor(rightWidth)) * pricePerCm;
+        
+        total += leftSideLegCost + rightSideLegCost;
+    }
+
+        if (document.getElementById("backPanelOption").checked) {
+            let backPanelLength = parseFloat(document.getElementById("backPanelLength").value) || 0;
+            let backPanelWidth = parseFloat(document.getElementById("backPanelWidth").value) || 0;
+            if (backPanelLength > 0 && backPanelWidth > 0) {
+                let backPanelCost = (backPanelLength * calculateWidthFactor(backPanelWidth)) * pricePerCm;
+                total += backPanelCost;
+            }
+        }
+
+        let sinkCount = parseInt(document.getElementById("sinkCount").value) || 0;
+        let sinkFlatCount = parseInt(document.getElementById("sinkFlatCount").value) || 0;
+        let stoveTopCount = parseInt(document.getElementById("stoveTopCount").value) || 0;
+        let stoveFlatCount = parseInt(document.getElementById("stoveFlatCount").value) || 0;
+        let sideJointCount = parseInt(document.getElementById("sideJointCount").value) || 0;
+        let socketCount = parseInt(document.getElementById("socketCount").value) || 0;
+
+        total += sinkCount * 3500;
+        total += sinkFlatCount * 5000;
+        total += stoveTopCount * 2000;
+        total += stoveFlatCount * 4000;
+        total += sideJointCount * 5000;
+        total += socketCount * 1500;
+
+        total = Math.max(total, 0);
+
+        // 計算含稅價格（假設稅率 5%）
+        let taxRate = 0.05; // 可調整稅率
+        let totalWithTax = total * (1 + taxRate);
+
+    // 更新顯示
+    document.getElementById("totalPrice").textContent = total.toFixed(0); // 未稅
+    document.getElementById("totalPriceWithTax").textContent = totalWithTax.toFixed(0); // 含稅
+}
+
+    function resetForm() {
+        document.getElementById("colorSelect").selectedIndex = 0;
+        document.getElementById("shapeSelect").selectedIndex = 0;
+        document.getElementById("sizeInputs").innerHTML = "";
+
+
+        // 重置細項數量和勾選框
+    document.getElementById("sinkCount").value = "";
+    document.getElementById("sinkOption").checked = false;
+    document.getElementById("sinkImage").style.display = "none";
+    
+    document.getElementById("sideJointCount").value = "";
+    document.getElementById("sideJointOption").checked = false;
+    document.getElementById("sideJointImage").style.display = "none";
+    
+    document.getElementById("sinkFlatCount").value = "";
+    document.getElementById("sinkFlatOption").checked = false;
+    document.getElementById("sinkFlatImage").style.display = "none";
+    
+    document.getElementById("stoveTopCount").value = "";
+    document.getElementById("stoveTopOption").checked = false;
+    document.getElementById("stoveTopImage").style.display = "none";
+    
+    document.getElementById("stoveFlatCount").value = "";
+    document.getElementById("stoveFlatOption").checked = false;
+    document.getElementById("stoveFlatImage").style.display = "none";
+    
+    document.getElementById("socketCount").value = "";
+    document.getElementById("socketOption").checked = false;
+    document.getElementById("socketImage").style.display = "none";
+        
+        // 重置側落腳
+    document.getElementById("sideLegOption").checked = false;
+    document.getElementById("sideLegInputs").style.display = "none";
+    document.getElementById("sideLegImage").style.display = "none";
+    document.getElementById("clearSideLegImage").style.display = "none";
+    document.getElementById("leftSideLegHeight").value = "";
+    document.getElementById("leftSideLegWidth").value = "";
+    document.getElementById("rightSideLegHeight").value = "";
+    document.getElementById("rightSideLegWidth").value = "";
+    
+    // 重置美背板
+    document.getElementById("backPanelOption").checked = false;
+    document.getElementById("backPanelInputs").style.display = "none";
+    document.getElementById("backPanelImage").style.display = "none";
+    document.getElementById("clearBackPanelImage").style.display = "none";
+    document.getElementById("backPanelLength").value = "";
+    document.getElementById("backPanelWidth").value = "";
+    
+
+    // 方案 1：直接隱藏圖片
+    document.getElementById("shapeImage1").style.display = "none";
+    document.getElementById("shapeImage2").style.display = "none";
+    document.getElementById("shapeImage1").src = ""; // 可選：清空圖片來源
+    document.getElementById("shapeImage2").src = ""; // 可選：清空圖片來源
+
+
+    // 方案 2：呼叫 updateSizeInputs 同步狀態
+    updateSizeInputs();
+
+
+
+
+    document.getElementById("totalPrice").textContent = "0"; // 未稅
+    document.getElementById("totalPriceWithTax").textContent = "0"; // 含稅
+
+
+}
+</script>
+</body>
+</html>
