@@ -83,6 +83,35 @@
             <option value="CP212">CP212（118 元）</option>
             <option value="CP218">CP218（118 元）</option>
             <option value="CP311">CP311（118 元）</option>
+                <option value="OB01">OB01（118 元）黑曜石系列</option>
+                <option value="OB02">OB02（118 元）黑曜石系列</option>
+	<option value="CP611">CP611（128 元）</option>
+	<option value="CN712">CN712（128 元）</option>
+	<option value="CN713">CN713（128 元）</option>
+		<option value="2M0103">2M0103（145 元）水磨石系列</option>
+		<option value="2M0105">2M0105（145 元）水磨石系列</option>
+		<option value="2M0106">2M0106（145 元）水磨石系列</option>
+		<option value="2M0107">2M0107（145 元）水磨石系列</option>
+		<option value="2M0108">2M0108（145 元）水磨石系列</option>
+	<option value="2CN711">2CN711（170 元）2cm</option>
+	<option value="2CN712">2CN712（170 元）2cm</option>
+	<option value="2CN713">2CN713（170 元）2cm</option>
+		<option value="2CP820">2CP820（170 元）2cm</option>
+		<option value="2CG860">2CG860（170 元）2cm</option>
+		<option value="2CG861">2CG861（170 元）2cm</option>
+	<option value="CP116">CP116（135 元）</option>
+	<option value="CP215">CP215（150 元）</option>
+	<option value="CP217">CP217（150 元）</option>
+	<option value="CP511">CP511（180 元）</option>
+	<option value="CP616">CP616（180 元）</option>
+	<option value="CP618">CP618（180 元）</option>
+	<option value="CG952">CG952（190 元）</option>
+
+
+
+
+
+
         </select>
 
         <label for="shapeSelect">選擇檯面形狀(初次使用請稍等~會顯示出示意圖依照上面說明輸入長寬尺寸)：</label>
@@ -366,15 +395,29 @@ function toggleSocketImage() {
 
         let priceMap = {
             "CP111": 108, "CP112": 108, "CP211": 108,
-            "CP212": 118, "CP218": 118, "CP311": 118
+            "CP212": 118, "CP218": 118, "CP311": 118,
+            "OB01": 118,"OB02": 118,
+            "CP611": 128,"CN712": 128,"CN713": 128,
+		"2M0103": 145,"2M0105": 145,"2M0106": 145,"2M0107": 145,"2M0108": 145,
+	"2CN711": 170,"2CN712": 170,"2CN713": 170,"2CP820": 170,"2CG860": 170,"2CG861": 170,
+		"CP116": 135,"CP215": 150,"CP217": 150,"CP511": 180,"CP616": 180,"CP618": 180,
+		"CG952": 190
+
+
+
+
         };
         
         let pricePerCm = priceMap[color] || 108;
         let total = 0;
 
         function calculateWidthFactor(width) {
-            return width < 69 ? 1 : width / 60;
+            // 如果寬度未輸入（NaN）、小於等於 0 或小於 69cm，回傳 1
+        if (isNaN(width) || width <= 0 || width < 69) {
+            return 1;
         }
+        return width / 60; // 寬度 >= 69cm 時，回傳 width / 60
+    }
 
         if (shape === "linear") {
             let length1 = parseFloat(document.getElementById("length1").value) || 0;
@@ -416,14 +459,16 @@ function toggleSocketImage() {
         total += leftSideLegCost + rightSideLegCost;
     }
 
-        if (document.getElementById("backPanelOption").checked) {
-            let backPanelLength = parseFloat(document.getElementById("backPanelLength").value) || 0;
-            let backPanelWidth = parseFloat(document.getElementById("backPanelWidth").value) || 0;
-            if (backPanelLength > 0 && backPanelWidth > 0) {
-                let backPanelCost = (backPanelLength * calculateWidthFactor(backPanelWidth)) * pricePerCm;
-                total += backPanelCost;
-            }
+        // 美背板計算（新增寬度係數調整）
+    if (document.getElementById("backPanelOption").checked) {
+        let backPanelLength = parseFloat(document.getElementById("backPanelLength").value) || 0;
+        let backPanelWidth = calculateWidthFactor(parseFloat(document.getElementById("backPanelWidth").value) || 0);
+        if (backPanelLength > 0 && backPanelWidth > 0) {
+            let backPanelCost = (backPanelLength * backPanelWidth) * pricePerCm;
+            total += backPanelCost;
         }
+    }
+
 
         let sinkCount = parseInt(document.getElementById("sinkCount").value) || 0;
         let sinkFlatCount = parseInt(document.getElementById("sinkFlatCount").value) || 0;
@@ -517,9 +562,9 @@ function toggleSocketImage() {
     document.getElementById("totalPriceWithTax").textContent = "0"; // 含稅
 
 
-}
+    }
 
-// 禁用右鍵與開發者工具
+    // 禁用右鍵與開發者工具
         document.addEventListener('contextmenu', event => event.preventDefault());
         document.addEventListener('keydown', event => {
     if (event.key === 'F12' || 
@@ -530,8 +575,9 @@ function toggleSocketImage() {
 });
 
 
-        
-        
+
+
+
 </script>
 </body>
 </html>
